@@ -3,10 +3,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-# ─── Config ───────────────────────────────────────────────────────────────────
+# â”€â”€â”€ Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 SESSION   = os.environ.get("LEETCODE_SESSION", "")
 CSRF      = os.environ.get("LEETCODE_CSRF", "")
-FORCE     = os.environ.get("FORCE_FULL_SYNC", "false").lower() == "true"
+FORCE     = os.environ.get("FORCE_FULL_SYNC", "false").lower() == "true"`r`nLEETCODE_USERNAME = os.environ.get("LEETCODE_USERNAME", "ZenxPrince")
 STATE_FILE = Path(".sync_state.json")
 
 LANG_EXT = {
@@ -55,7 +55,7 @@ HEADERS = {
 
 GQL_URL = "https://leetcode.com/graphql"
 
-# ─── State ────────────────────────────────────────────────────────────────────
+# â”€â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def load_state() -> dict:
     if STATE_FILE.exists():
         return json.loads(STATE_FILE.read_text())
@@ -64,7 +64,7 @@ def load_state() -> dict:
 def save_state(state: dict):
     STATE_FILE.write_text(json.dumps(state, indent=2))
 
-# ─── GraphQL helpers ──────────────────────────────────────────────────────────
+# â”€â”€â”€ GraphQL helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def gql(query: str, variables: dict = {}, retries: int = 3) -> Optional[dict]:
     for attempt in range(retries):
         try:
@@ -72,39 +72,31 @@ def gql(query: str, variables: dict = {}, retries: int = 3) -> Optional[dict]:
                 json={"query": query, "variables": variables},
                 headers=HEADERS, timeout=30)
             if r.status_code == 403:
-                print("⛔ 403 Forbidden — check LEETCODE_SESSION and LEETCODE_CSRF secrets.")
+                print("â›” 403 Forbidden â€” check LEETCODE_SESSION and LEETCODE_CSRF secrets.")
                 sys.exit(1)
             if r.status_code == 429:
                 wait = 60 * (attempt + 1)
-                print(f"⏳ Rate limited — waiting {wait}s…")
+                print(f"â³ Rate limited â€” waiting {wait}sâ€¦")
                 time.sleep(wait)
                 continue
             r.raise_for_status()
             return r.json().get("data")
         except requests.RequestException as e:
-            print(f"⚠️  Request error (attempt {attempt+1}): {e}")
+            print(f"âš ï¸  Request error (attempt {attempt+1}): {e}")
             time.sleep(10 * (attempt + 1))
     return None
 
-# ─── Fetch accepted submissions ───────────────────────────────────────────────
+# â”€â”€â”€ Fetch accepted submissions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 SUBMISSIONS_QUERY = """
-query submissionList($offset: Int!, $limit: Int!, $lastKey: String) {
-  submissionList(offset: $offset, limit: $limit, lastKey: $lastKey) {
-    lastKey
-    hasNext
-    submissions {
-      id
-      title
-      titleSlug
-      statusDisplay
-      lang
-      timestamp
-      url
-    }
+query recentAcSubmissions($username: String!, $limit: Int!) {
+  recentAcSubmissionList(username: $username, limit: $limit) {
+    id
+    title
+    titleSlug
+    timestamp
   }
 }
 """
-
 PROBLEM_DETAIL_QUERY = """
 query questionData($titleSlug: String!) {
   question(titleSlug: $titleSlug) {
@@ -138,7 +130,7 @@ def fetch_all_accepted(state: dict) -> list[dict]:
     last_key = None
     seen = set(state["synced"].keys()) if not FORCE else set()
 
-    print(f"🔍 Fetching submissions (force_full={FORCE})…")
+    print(f"ðŸ” Fetching submissions (force_full={FORCE})â€¦")
 
     while True:
         vars_ = {"offset": offset, "limit": limit}
@@ -170,7 +162,7 @@ def fetch_all_accepted(state: dict) -> list[dict]:
         offset += limit
         time.sleep(1.5)   # polite rate limiting
 
-    print(f"📥 Found {len(accepted)} new accepted solution(s) to sync.")
+    print(f"ðŸ“¥ Found {len(accepted)} new accepted solution(s) to sync.")
     return accepted
 
 def fetch_problem_detail(slug: str) -> Optional[dict]:
@@ -181,7 +173,7 @@ def fetch_submission_code(sub_id: str) -> Optional[dict]:
     data = gql(SUBMISSION_DETAIL_QUERY, {"submissionId": int(sub_id)})
     return data.get("submissionDetails") if data else None
 
-# ─── File generation ─────────────────────────────────────────────────────────
+# â”€â”€â”€ File generation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def slugify(title: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
 
@@ -192,7 +184,7 @@ def build_comment_header(lang: str, problem: dict, detail: dict) -> str:
     memory  = detail.get("memoryMB",  "N/A")
     ts      = datetime.fromtimestamp(int(detail.get("timestamp", 0)), tz=timezone.utc)
     lines = [
-        f"{cm} ─────────────────────────────────────────────────────",
+        f"{cm} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€",
         f"{cm} Problem  : {problem['questionFrontendId']}. {problem['title']}",
         f"{cm} Difficulty: {problem.get('difficulty', 'Unknown')}",
         f"{cm} Topics   : {tags or 'N/A'}",
@@ -200,7 +192,7 @@ def build_comment_header(lang: str, problem: dict, detail: dict) -> str:
         f"{cm} Memory   : {memory} MB",
         f"{cm} Solved   : {ts.strftime('%Y-%m-%d')}",
         f"{cm} URL      : https://leetcode.com/problems/{problem['titleSlug']}/",
-        f"{cm} ─────────────────────────────────────────────────────",
+        f"{cm} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€",
         "",
     ]
     return "\n".join(lines)
@@ -233,10 +225,10 @@ def write_solution(problem: dict, sub: dict, detail: dict):
     code = detail.get("code", "# code not available")
     sol_file.write_text(header + code + "\n")
 
-    print(f"  ✅  {pid}. {title} ({lang}) → {sol_file}")
+    print(f"  âœ…  {pid}. {title} ({lang}) â†’ {sol_file}")
     return str(sol_file)
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
+# â”€â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def update_readme_summary(state: dict):
     total = len(state["synced"])
     by_diff = {}
@@ -245,7 +237,7 @@ def update_readme_summary(state: dict):
         by_diff[d] = by_diff.get(d, 0) + 1
 
     readme = Path("README.md")
-    content = f"""# ZenxPrince — LeetCode Solutions
+    content = f"""# ZenxPrince â€” LeetCode Solutions
 
 Auto-synced via [Phoenix Engineering Infrastructure](https://github.com/ZenxPrince).
 
@@ -272,14 +264,14 @@ _Last synced: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}_
 
 def main():
     if not SESSION or not CSRF:
-        print("⚠️  LEETCODE_SESSION or LEETCODE_CSRF not set — skipping sync.")
+        print("âš ï¸  LEETCODE_SESSION or LEETCODE_CSRF not set â€” skipping sync.")
         sys.exit(0)
 
     state = load_state()
     submissions = fetch_all_accepted(state)
 
     if not submissions:
-        print("✅ Nothing new to sync.")
+        print("âœ… Nothing new to sync.")
         update_readme_summary(state)
         save_state(state)
         return
@@ -290,16 +282,16 @@ def main():
         lang = sub["lang"].lower()
         key  = f"{slug}_{lang}"
 
-        print(f"\n→ {sub['title']} ({lang})")
+        print(f"\nâ†’ {sub['title']} ({lang})")
 
         problem = fetch_problem_detail(slug)
         if not problem:
-            print(f"  ⚠️  Could not fetch problem detail — skipping.")
+            print(f"  âš ï¸  Could not fetch problem detail â€” skipping.")
             continue
 
         detail = fetch_submission_code(sub["id"])
         if not detail:
-            print(f"  ⚠️  Could not fetch submission code — skipping.")
+            print(f"  âš ï¸  Could not fetch submission code â€” skipping.")
             continue
 
         write_solution(problem, sub, detail)
@@ -317,7 +309,7 @@ def main():
     update_readme_summary(state)
     save_state(state)
 
-    print(f"\n🎉 Synced {synced_count} solution(s).")
+    print(f"\nðŸŽ‰ Synced {synced_count} solution(s).")
     with open(os.environ.get("GITHUB_OUTPUT", "/dev/null"), "a") as f:
         f.write(f"synced_count={synced_count}\n")
 
