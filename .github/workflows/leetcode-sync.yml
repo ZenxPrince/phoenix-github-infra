@@ -1,0 +1,76 @@
+﻿name: LeetCode → GitHub Sync
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"
+  workflow_dispatch:
+    inputs:
+      force_full_sync:
+        description: "Force a full re-sync of all accepted solutions"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+env:
+  BOT_NAME: "LeetCode Sync Bot"
+  BOT_EMAIL: "leetcode-sync@users.noreply.github.com"
+  TARGET_REPO: "ZenxPrince/ZenxPrince-LeetCode-Solutions"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout infrastructure
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PHOENIX_PAT }}
+
+      - name: Checkout solutions repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TARGET_REPO }}
+          token: ${{ secrets.PHOENIX_PAT }}
+          path: solutions
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests python-dateutil
+
+      - name: Configure Git
+        working-directory: solutions
+        run: |
+          git config user.name "${{ env.BOT_NAME }}"
+          git config user.email "${{ env.BOT_EMAIL }}"
+
+      - name: Sync accepted LeetCode solutions
+        working-directory: solutions
+        env:
+          LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION }}
+          LEETCODE_CSRF: ${{ secrets.LEETCODE_CSRF }}
+          FORCE_FULL_SYNC: ${{ inputs.force_full_sync || 'false' }}
+        run: |
+          python ../scripts/sync_leetcode.py
+
+      - name: Commit and push changes
+        working-directory: solutions
+        run: |
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No new accepted LeetCode solutions."
+            exit 0
+          fi
+
+          git commit -m "chore: sync accepted LeetCode solutions"
+          git push

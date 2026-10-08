@@ -1,0 +1,117 @@
+﻿name: Phoenix Autonomous Engineering Infrastructure
+
+on:
+  schedule:
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+    inputs:
+      task_override:
+        description: "Run a specific maintenance task"
+        required: false
+        default: ""
+        type: choice
+        options:
+          - ""
+          - health
+          - docs
+          - test
+          - deps
+          - stats
+          - security
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  BOT_NAME: "Phoenix Engineering Bot"
+  BOT_EMAIL: "phoenix-bot@users.noreply.github.com"
+  PYTHON_VERSION: "3.11"
+  REPO: "ZenxPrince/phoenix-github-infra"
+
+jobs:
+  maintenance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PHOENIX_PAT || github.token }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyGithub requests rich toml bandit ruff safety
+
+      - name: Configure Git
+        run: |
+          git config user.name "${{ env.BOT_NAME }}"
+          git config user.email "${{ env.BOT_EMAIL }}"
+
+      - name: Select maintenance task
+        id: task
+        shell: bash
+        run: |
+          OVERRIDE="${{ inputs.task_override }}"
+
+          if [ -n "$OVERRIDE" ]; then
+            TASK="$OVERRIDE"
+          else
+            DAY=$(date -u +%u)
+            TASKS=(health docs test deps stats security)
+            INDEX=$(( (DAY - 1) % 6 ))
+            TASK="${TASKS[$INDEX]}"
+          fi
+
+          echo "task=$TASK" >> "$GITHUB_OUTPUT"
+          echo "Selected task: $TASK"
+
+      - name: Run health
+        if: steps.task.outputs.task == 'health'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PHOENIX_PAT || github.token }}
+        run: python scripts/task_health.py
+
+      - name: Run documentation
+        if: steps.task.outputs.task == 'docs'
+        run: python scripts/task_docs.py
+
+      - name: Run tests
+        if: steps.task.outputs.task == 'test'
+        run: python scripts/task_test.py
+
+      - name: Run dependency checks
+        if: steps.task.outputs.task == 'deps'
+        run: python scripts/task_deps.py
+
+      - name: Run statistics
+        if: steps.task.outputs.task == 'stats'
+        run: python scripts/task_stats.py
+
+      - name: Run security
+        if: steps.task.outputs.task == 'security'
+        run: python scripts/task_security.py
+
+      - name: Update engineering journal
+        run: python scripts/update_journal.py
+
+      - name: Commit real maintenance changes
+        shell: bash
+        run: |
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No repository changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: automated engineering maintenance"
+          git push
