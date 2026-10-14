@@ -1,0 +1,21 @@
+{
+  "python_compile": {
+    "status": "fail",
+    "files_checked": 8,
+    "failures": [
+      {
+        "file": "scripts/sync_leetcode.py",
+        "error": "File \"scripts/sync_leetcode.py\", line 9\n    FORCE     = os.environ.get(\"FORCE_FULL_SYNC\", \"false\").lower() == \"true\"`r`nLEETCODE_USERNAME = os.environ.get(\"LEETCODE_USERNAME\", \"ZenxPrince\")\n                                                                            ^\nSyntaxError: invalid syntax"
+      }
+    ]
+  },
+  "json_validation": {
+    "status": "ok",
+    "files_checked": 3,
+    "failures": []
+  },
+  "ruff": {
+    "status": "warn",
+    "output": "one\n7  + from datetime import datetime, timezone, UTC\n8  | from pathlib import Path\n--------------------------------------------------------------------------------\n24 |\n   -     timestamp = datetime.now(timezone.utc).strftime(\n25 +     timestamp = datetime.now(UTC).strftime(\n26 |         \"%Y-%m-%d %H:%M UTC\"\n   |\n\nPLW1510 `subprocess.run` without explicit `check` argument\n  --> scripts/task_test.py:11:14\n   |\n10 | def run(command):\n11 |     result = subprocess.run(\n   |              ^^^^^^^^^^^^^^\n12 |         command,\n13 |         capture_output=True,\n   |\nhelp: Add explicit `check=False`\n   |\n12 |         command,\n   -         capture_output=True,\n13 +         check=False, capture_output=True,\n14 |         text=True,\n   |\nnote: This suggestion may be incorrect or produce invalid syntax. It requires manual review and cannot be applied automatically\n\nBLE001 Do not catch blind exception: `Exception`\n  --> scripts/task_test.py:56:16\n   |\n54 |         try:\n55 |             json.loads(file.read_text(encoding=\"utf-8\"))\n56 |         except Exception as exc:\n   |                ^^^^^^^^^\n57 |             json_failures.append({\n58 |                 \"file\": str(file),\n   |\n\nUP017 [*] Use `datetime.UTC` alias\n  --> scripts/update_journal.py:14:24\n   |\n13 |     journal = docs / \"ENGINEERING_JOURNAL.md\"\n14 |     now = datetime.now(timezone.utc)\n   |                        ^^^^^^^^^^^^\n15 |     timestamp = now.strftime(\"%Y-%m-%d %H:%M UTC\")\n   |\nhelp: Convert to `datetime.UTC` alias\n   |\n4  |\n   - from datetime import datetime, timezone\n5  + from datetime import datetime, timezone, UTC\n6  | from pathlib import Path\n--------------------------------------------------------------------------------\n13 |     journal = docs / \"ENGINEERING_JOURNAL.md\"\n   -     now = datetime.now(timezone.utc)\n14 +     now = datetime.now(UTC)\n15 |     timestamp = now.strftime(\"%Y-%m-%d %H:%M UTC\")\n   |\n\nFound 22 errors.\n[*] 11 fixable with `--fix` (2 unsafe fixes available with `--fix --unsafe-fixes`)."
+  }
+}
