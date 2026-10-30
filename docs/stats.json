@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-27 09:16 UTC",
-  "repository": "ZenxPrince/phoenix-github-infra",
-  "maintenance": [
-    "health",
-    "docs",
-    "test",
-    "deps",
-    "stats",
-    "security"
-  ]
+  "generated_at": "2026-10-30 10:21 UTC",
+  "commits_last_30_days": 25,
+  "tracked_files": 23,
+  "file_extensions": {
+    ".json": 8,
+    ".py": 8,
+    ".md": 4,
+    ".yml": 2,
+    "[no extension]": 1
+  }
 }
