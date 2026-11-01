@@ -1,0 +1,53 @@
+{
+  "required_files": {
+    "status": "warn",
+    "missing": [
+      "README.md"
+    ]
+  },
+  "git_integrity": {
+    "status": "warn",
+    "output": "error: unknown option `quiet'\nusage: git fsck [--tags] [--root] [--unreachable] [--cache] [--no-reflogs]\n                [--[no-]full] [--strict] [--verbose] [--lost-found]\n                [--[no-]dangling] [--[no-]progress] [--connectivity-only]\n                [--[no-]name-objects] [--[no-]references] [<object>...]\n\n    -v, --[no-]verbose    be verbose\n    --[no-]unreachable    show unreachable objects\n    --[no-]dangling       show dangling objects\n    --[no-]tags           report tags\n    --"
+  },
+  "commit_cadence": {
+    "commits_last_7d": 6,
+    "recent": [
+      "36b136f8d444dad547ecb374e58ead72a577c933 2026-10-31 09:53:09 +0000 chore: automated engineering maintenance",
+      "b1151a5241fe85d56717ff5e1ca08377f2cb58ff 2026-10-30 10:21:40 +0000 chore: automated engineering maintenance",
+      "a87c6b3050e7da3c9f8e0b221b21949a6dbf9cce 2026-10-29 10:19:28 +0000 chore: automated engineering maintenance",
+      "17e821851525fd88c62fbe2883c15f8575927b34 2026-10-28 09:56:54 +0000 chore: automated engineering maintenance",
+      "3c025194ff889194ddd2e8143e36c715c3e1fd67 2026-10-27 09:16:07 +0000 chore: automated engineering maintenance"
+    ]
+  },
+  "large_files": [],
+  "recent_failures": {
+    "status": "warn",
+    "recent_failures": [
+      {
+        "name": "LeetCode \u2192 GitHub Sync",
+        "created": "2026-11-01T03:18:59+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/41268681358"
+      },
+      {
+        "name": "LeetCode \u2192 GitHub Sync",
+        "created": "2026-10-31T22:55:43+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/41250326199"
+      },
+      {
+        "name": "LeetCode \u2192 GitHub Sync",
+        "created": "2026-10-31T16:31:17+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/41220073379"
+      },
+      {
+        "name": "LeetCode \u2192 GitHub Sync",
+        "created": "2026-10-31T10:02:30+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/41191107312"
+      },
+      {
+        "name": "LeetCode \u2192 GitHub Sync",
+        "created": "2026-10-31T03:19:49+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/41163896121"
+      }
+    ]
+  }
+}
