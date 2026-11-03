@@ -2,10 +2,9 @@
 
 on:
   schedule:
-    # Runs 3 times a day: 00:00, 08:00, and 16:00 UTC 
-    # (Corresponding to 05:30, 13:30, and 21:30 IST)
-    - cron: '0 0,8,16 * * *'
-  workflow_dispatch: # Allows manual execution from the GitHub Actions tab
+    # Runs EVERY HOUR at minute 0 for maximum possible contribution density
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allows manual execution anytime
 
 permissions:
   contents: write
@@ -45,4 +44,4 @@ jobs:
         run: |
           git status
           git add .
-          git diff --quiet && git diff --cached --quiet || (git commit -m "chore: automated contribution sync [skip ci]" && git push)
+          git diff --quiet && git diff --cached --quiet || (git commit -m "chore: maximum automated contribution sync [skip ci]" && git push)
