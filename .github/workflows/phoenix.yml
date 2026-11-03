@@ -2,9 +2,9 @@
 
 on:
   schedule:
-    # Runs EVERY HOUR at minute 0 for maximum possible contribution density
-    - cron: '0 * * * *'
-  workflow_dispatch: # Allows manual execution anytime
+    # Runs every 4 hours (6 times a day) for a rich, organic, high-density green graph
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -36,12 +36,13 @@ jobs:
         run: |
           python -m unittest discover -s . -p "test_*.py"
 
-      - name: Execute Phoenix Automation Script
+      - name: Execute Natural-Density Phoenix Automation
         run: |
-          python contribute.py
+          # Balanced commit count for a lush, organic, natural-looking contribution graph
+          python contribute.py --max_commits=8 --frequency=80
 
       - name: Push Generated Contributions
         run: |
           git status
           git add .
-          git diff --quiet && git diff --cached --quiet || (git commit -m "chore: maximum automated contribution sync [skip ci]" && git push)
+          git diff --quiet && git diff --cached --quiet || (git commit -m "chore: natural contribution sync [skip ci]" && git push)
