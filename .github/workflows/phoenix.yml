@@ -2,8 +2,7 @@
 
 on:
   schedule:
-    # Runs every 4 hours (6 times a day) for a rich, organic, high-density green graph
-    - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -12,20 +11,21 @@ permissions:
 jobs:
   run-phoenix:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Configure Git Identity
         run: |
-          git config --global user.name "Phoenix Automation Bot"
-          git config --global user.email "actions@github.com"
+          git config user.name "Phoenix Automation Bot"
+          git config user.email "actions@github.com"
 
       - name: Install Dependencies
         run: |
@@ -33,16 +33,27 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run Tests
+        shell: bash
         run: |
-          python -m unittest discover -s . -p "test_*.py"
+          cd "$RUNNER_TEMP"
+          PYTHONPATH="$GITHUB_WORKSPACE" python -m unittest test_contribute
 
-      - name: Execute Natural-Density Phoenix Automation
+      - name: Execute Phoenix Generator
+        shell: bash
         run: |
-          # Balanced commit count for a lush, organic, natural-looking contribution graph
-          python contribute.py --max_commits=8 --frequency=80
+          mkdir -p "$RUNNER_TEMP/phoenix-generator"
+          cd "$RUNNER_TEMP/phoenix-generator"
+          python "$GITHUB_WORKSPACE/contribute.py" --max_commits=8 --frequency=80
 
-      - name: Push Generated Contributions
+      - name: Commit Repository Changes
+        shell: bash
         run: |
-          git status
-          git add .
-          git diff --quiet && git diff --cached --quiet || (git commit -m "chore: natural contribution sync [skip ci]" && git push)
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No repository changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: Phoenix automation"
+          git push
