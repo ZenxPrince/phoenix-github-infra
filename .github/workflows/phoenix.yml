@@ -2,16 +2,20 @@
 
 on:
   schedule:
-    - cron: "0 */4 * * *"
+    - cron: "0 0,6,12,18 * * *"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: phoenix-cloud-automation
+  cancel-in-progress: false
 
 jobs:
   run-phoenix:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
 
     steps:
       - name: Checkout Repository
@@ -21,39 +25,38 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Configure Git Identity
-        run: |
-          git config user.name "Phoenix Automation Bot"
-          git config user.email "actions@github.com"
+          cache: "pip"
 
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          python -m pip install --upgrade pip --retries 5 --timeout 30
+          python -m pip install flake8 --retries 5 --timeout 30
+
+      - name: Check Repository Integrity
+        shell: bash
+        run: |
+          git ls-files -s > "$RUNNER_TEMP/git-index.txt"
+
+          if grep -q '^160000 ' "$RUNNER_TEMP/git-index.txt"; then
+            echo "::error::Broken nested Git repository entries detected."
+            exit 1
+          fi
+
+          echo "Repository index is clean."
+
+      - name: Lint
+        run: |
+          python -m flake8 contribute.py
+          python -m flake8 test_contribute.py
 
       - name: Run Tests
         shell: bash
         run: |
           cd "$RUNNER_TEMP"
-          PYTHONPATH="$GITHUB_WORKSPACE" python -m unittest test_contribute
+          PYTHONPATH="$GITHUB_WORKSPACE" python -m unittest test_contribute -v
 
-      - name: Execute Phoenix Generator
-        shell: bash
+      - name: Phoenix Health Check
         run: |
-          mkdir -p "$RUNNER_TEMP/phoenix-generator"
-          cd "$RUNNER_TEMP/phoenix-generator"
-          python "$GITHUB_WORKSPACE/contribute.py" --max_commits=8 --frequency=80
-
-      - name: Commit Repository Changes
-        shell: bash
-        run: |
-          git add -A
-
-          if git diff --cached --quiet; then
-            echo "No repository changes to commit."
-            exit 0
-          fi
-
-          git commit -m "chore: Phoenix automation"
-          git push
+          python --version
+          git status --short
+          echo "Phoenix scheduled health check completed."
