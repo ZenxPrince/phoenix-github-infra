@@ -1,0 +1,53 @@
+{
+  "required_files": {
+    "status": "warn",
+    "missing": [
+      "README.md"
+    ]
+  },
+  "git_integrity": {
+    "status": "warn",
+    "output": "error: unknown option `quiet'\nusage: git fsck [--tags] [--root] [--unreachable] [--cache] [--no-reflogs]\n                [--[no-]full] [--strict] [--verbose] [--lost-found]\n                [--[no-]dangling] [--[no-]progress] [--connectivity-only]\n                [--[no-]name-objects] [--[no-]references] [<object>...]\n\n    -v, --[no-]verbose    be verbose\n    --[no-]unreachable    show unreachable objects\n    --[no-]dangling       show dangling objects\n    --[no-]tags           report tags\n    --"
+  },
+  "commit_cadence": {
+    "commits_last_7d": 27,
+    "recent": [
+      "db11276b89452af270086766908aaceb041a7c24 2026-11-07 21:08:15 +0000 chore: automated engineering maintenance",
+      "963de30e66a557147d954193f325d71aa9d083a4 2026-11-07 17:21:41 +0000 chore: automated engineering maintenance",
+      "639f7cc9b8690f3bd7bfd0e9dc95064fc44c47ea 2026-11-07 11:58:33 +0000 chore: automated engineering maintenance",
+      "e99283bc1a8cef895b2859d21f4f9ee2917d7a44 2026-11-07 03:24:45 +0000 chore: automated engineering maintenance",
+      "f5bfbf9af98f7f3858f167e8bc826939d7342759 2026-11-06 22:27:51 +0000 chore: automated engineering maintenance"
+    ]
+  },
+  "large_files": [],
+  "recent_failures": {
+    "status": "warn",
+    "recent_failures": [
+      {
+        "name": "Phoenix Cloud Automation",
+        "created": "2026-11-07T21:41:15+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/42417034825"
+      },
+      {
+        "name": "Phoenix Cloud Automation",
+        "created": "2026-11-07T12:48:28+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/42374100891"
+      },
+      {
+        "name": "Phoenix Cloud Automation",
+        "created": "2026-11-07T05:37:19+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/42343509617"
+      },
+      {
+        "name": "Phoenix Cloud Automation",
+        "created": "2026-11-06T19:12:54+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/42277641416"
+      },
+      {
+        "name": "Phoenix Cloud Automation",
+        "created": "2026-11-06T06:06:40+00:00",
+        "url": "https://github.com/ZenxPrince/phoenix-github-infra/actions/runs/42172377659"
+      }
+    ]
+  }
+}
