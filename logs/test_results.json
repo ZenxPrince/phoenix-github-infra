@@ -11,7 +11,7 @@
   },
   "json_validation": {
     "status": "ok",
-    "files_checked": 10,
+    "files_checked": 12,
     "failures": []
   },
   "ruff": {
